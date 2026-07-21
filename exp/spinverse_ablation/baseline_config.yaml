@@ -1,0 +1,103 @@
+# Default configuration for test_recon_11_merged_v4.py
+# Cosine-annealing v3 (multi-cylinder fix)
+
+# Mesh and experiment config
+file: null
+experiment: "mesh_setup/setup_files/cylinder_config_ls2.yaml"
+target_mesh: "mesh_setup/mesh_files/torus_majr10_minr6.pth"
+mesh_scale: 1.0
+iterations: 400
+log_iter: 5
+clamp_vals: [1.0e-5, 0.1]
+init_val: 1.0e-3
+
+# Learning rate config
+learning_rate: 0.6
+lr_schedule:
+  type: "lambda"
+  cycle_iters: 200        # Reset every 200 iterations
+  warmup_iters: 50        # Warmup for first 50 iters of each cycle
+  min_lr_factor: 0.1      # Min LR at end of each cycle
+
+# Tau decades
+log_sigmoid_tau: 1.0
+edge_tau_decades: 0.5
+
+# Regularization lambdas
+lambda_continuity:
+  start: 0.0
+  end: 0.0
+  block_len: null
+
+lambda_manifold_reg:
+  start: 0.0
+  end: 0.0
+  block_len: null
+
+lambda_edge_reg:
+  start: 0.0
+  end: 0.0
+  block_len: null
+
+lambda_binarize:
+  start: 0.0
+  end: 0.0
+  block_len: null
+
+# v3: simulation_lambda can be a schedule {start, end}
+simulation_lambda:
+  start: 100.0
+  end: 100.0
+  block_len: null
+
+# Diffusion time schedule
+dt_schedule:
+  - range: [0, 200]
+    dt_id: 2
+  - range: [200, 400]
+    dt_id: 1
+
+# Cosine-annealing blend configuration
+dt_cosine_anneal:
+  dt_old: 2
+  dt_new: 1
+  warmup_iters: 80  # v3: longer warmup
+  n_cycles: 1  # v3: fewer, longer cycles
+  cycle_mult: 1.0
+  restart_fraction: 0.2
+  reset_adam_per_cycle: false
+  post_switch_lr: 0.12
+  lr_anneal_cosine: false
+  grad_clip_norm_post: 0.25
+  alpha_warmup_floor: 0.2  # v3: higher floor
+
+# Legacy dt_blend (kept for backward compatibility)
+dt_blend: null
+
+# v3: new params (multi-cylinder fix)
+gradient_fill_boost: 0.0  # boost for uncommitted faces
+adaptive_edge_coherence: false  # modulate edge reg by commitment
+adaptive_edge_floor: 0.2  # min edge weight for uncommitted pairs
+
+# General settings
+scalar_flush_every: 5
+device: null
+notes: "cosine-annealing v3 baseline"
+tet_grid_cache_dir: null
+plot_mesh: true
+grad_clip_norm: 1.0
+
+# Merged toggles
+edge_reg_anneal_with_alpha: 0.0   # toggle edge reg annealing
+loss_blend_anneal: false           # toggle loss blend anneal
+grad_clip_anneal: false           # toggle grad clip anneal
+gradient_fill:                    # toggle gradient fill
+  enabled: false
+  boost: 0.0
+  start: "warmup"
+
+# New ROM field
+rom:
+  enabled: true
+  start_iteration: 0
+  eig_refresh_every: 10

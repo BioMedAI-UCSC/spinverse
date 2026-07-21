@@ -1,0 +1,40 @@
+mods:
+  # ============================================================
+  # SHORT-TO-LONG
+  # ============================================================
+  - name: baseline_1_lr_0p75
+    patch: {}
+
+  - name: test_1a_continuity
+    patch:
+      continuity_weighting: true
+      lambda_continuity:
+        start: 2.0
+        end: 2.0
+        block_len: null
+
+  - name: test_1b_manifold
+    patch:
+      lambda_manifold_reg:
+        start: 0.0
+        end: 2.0
+        block_len: null
+
+      soft_manifold: 
+        enabled: true
+
+  - name: test_1c_continuity_manifold
+    patch:
+      continuity_weighting: true
+      lambda_continuity:
+        start: 2.0
+        end: 2.0
+        block_len: null
+      
+      lambda_manifold_reg:
+        start: 0.0
+        end: 2.0
+        block_len: null
+
+      soft_manifold: 
+        enabled: true
